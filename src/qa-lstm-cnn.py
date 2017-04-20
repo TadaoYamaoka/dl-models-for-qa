@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import division, print_function
-from gensim.models import Word2Vec
+import gensim
 from keras.callbacks import ModelCheckpoint
 from keras.layers import Dense, Merge, Dropout, Flatten
 from keras.layers.convolutional import Convolution1D, MaxPooling1D
@@ -46,7 +46,7 @@ print(Xqtrain.shape, Xqtest.shape, Xatrain.shape, Xatest.shape,
 # get embeddings from word2vec
 # see https://github.com/fchollet/keras/issues/853
 print("Loading Word2Vec model and generating embedding matrix...")
-word2vec = Word2Vec.load_word2vec_format(
+word2vec = gensim.models.KeyedVectors.load_word2vec_format(
     os.path.join(DATA_DIR, WORD2VEC_BIN), binary=True)
 embedding_weights = np.zeros((vocab_size, WORD2VEC_EMBED_SIZE))
 for word, index in word2idx.items():
@@ -98,7 +98,7 @@ loss, acc = model.evaluate([Xqtest, Xatest], Ytest, batch_size=BATCH_SIZE)
 print("Test loss/accuracy final model = %.4f, %.4f" % (loss, acc))
 
 model.save_weights(os.path.join(MODEL_DIR, "qa-lstm-cnn-final.hdf5"))
-with open(os.path.join(MODEL_DIR, "qa-lstm-cnn.json"), "wb") as fjson:
+with open(os.path.join(MODEL_DIR, "qa-lstm-cnn.json"), "w") as fjson:
     fjson.write(model.to_json())
 
 model.load_weights(filepath=os.path.join(MODEL_DIR, "qa-lstm-cnn-best.hdf5"))

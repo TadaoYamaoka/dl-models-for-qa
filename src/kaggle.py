@@ -27,19 +27,19 @@ def get_question_answer_pairs(question_file, is_test=False):
     qapairs = []
     fqa = open(question_file, "rb")
     for line in fqa:
-        if line.startswith("#"):
+        if line.startswith(b"#"):
             continue
         line = line.strip().decode("utf8").encode("ascii", "ignore")
-        cols = line.split("\t")
+        cols = line.split(b"\t")
         question = cols[1]
-        qwords = nltk.word_tokenize(question)
+        qwords = nltk.word_tokenize(question.decode('utf8'))
         if not is_test:
             correct_ans = cols[2]
             answers = cols[3:]
             # training file parsing
             correct_ans_idx = ord(correct_ans) - ord('A')
             for idx, answer in enumerate(answers):
-                awords = nltk.word_tokenize(answer)
+                awords = nltk.word_tokenize(answer.decode('utf8'))
                 qapairs.append((qwords, awords, idx == correct_ans_idx))
         else:
             # test file parsing (no correct answer)
